@@ -12,6 +12,9 @@ $routes->get('logout', 'Admin\AuthController::logout');
 $routes->group('admin', ['filter' => 'auth'], function ($routes) {
     $routes->get('dashboard', 'Admin\DashboardController::index');
     $routes->get('soal', 'Admin\SoalController::index');
+    $routes->post('soal/store', 'Admin\SoalController::store');
+    $routes->post('soal/update/(:num)', 'Admin\SoalController::update/$1');
+    $routes->delete('soal/delete/(:num)', 'Admin\SoalController::delete/$1');
     $routes->get('nilai', 'Admin\NilaiController::index');
     // Add other admin routes here
 });

@@ -6,6 +6,8 @@
 <?php $this->endSection(); ?>
 
 <?php $this->section('content'); ?>
+<?= $this->include('component/modal_tambah_soal') ?>
+<?= $this->include('component/modal_edit_soal') ?>
 <style>
     #tableSoal td,
     #tableSoal th {
@@ -15,6 +17,36 @@
         word-break: break-word;
     }
 </style>
+
+<!-- sweetalert success -->
+<?php if (session()->getFlashdata('success')): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Sukses',
+                text: '<?= session()->getFlashdata('success') ?>',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        });
+    </script>
+<?php endif; ?>
+<!-- error -->
+<?php if (session()->getFlashdata('error')): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '<?= session()->getFlashdata('error') ?>',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        });
+    </script>
+<?php endif; ?>
+
 <div class="row">
     <div class="col-lg-12 d-flex align-items-stretch">
         <div class="card">
@@ -67,8 +99,19 @@
                                         <p class="fw-normal mb-0"><?= $no++ ?></p>
                                     </td>
                                     <td class="border-bottom-0">
-                                        <p class="fw-semibold mb-1">Level <?= $soal['level'] ?> - <?= $soal['kategori'] ?></p>
+                                        <p class="fw-semibold mb-1">
+                                            Level <?= $soal['level'] ?> - <?= $soal['kategori'] ?>
+                                        </p>
                                         <span class="fw-normal"><?= $soal['soal'] ?></span>
+
+                                        <?php if (!empty($soal['foto'])): ?>
+                                            <div class="mt-2">
+                                                <img src="<?= base_url('uploads/soal/' . $soal['foto']) ?>"
+                                                    alt="Gambar Soal"
+                                                    class="img-fluid rounded border"
+                                                    style="max-width: 200px; height: auto;">
+                                            </div>
+                                        <?php endif; ?>
                                     </td>
                                     <td class="border-bottom-0">
                                         <p class="mb-0 fw-normal"><?= $soal['pilihan_a'] ?></p>
@@ -90,11 +133,28 @@
                                     </td>
                                     <td class="border-bottom-0">
                                         <div class="d-flex gap-2">
-                                            <a href="<?= base_url('admin/soal/edit/' . $soal['id']) ?>" class="btn btn-sm btn-success"><i class="ti ti-pencil"></i></a>
-                                            <form action="<?= base_url('admin/soal/delete/' . $soal['id']) ?>" method="post" class="d-inline">
-                                                <input type="hidden" name="_method" value="DELETE">
-                                                <button type="submit" class="btn btn-sm btn-danger"><i class="ti ti-trash"></i></button>
-                                            </form>
+                                            <a href="javascript:void(0)"
+                                                class="btn btn-sm btn-success btnEditSoal"
+                                                data-id="<?= $soal['id'] ?>"
+                                                data-kategori="<?= $soal['kategori_id'] ?>"
+                                                data-level="<?= $soal['level'] ?>"
+                                                data-soal="<?= htmlspecialchars($soal['soal']) ?>"
+                                                data-foto="<?= $soal['foto'] ?>"
+                                                data-a="<?= htmlspecialchars($soal['pilihan_a']) ?>"
+                                                data-b="<?= htmlspecialchars($soal['pilihan_b']) ?>"
+                                                data-c="<?= htmlspecialchars($soal['pilihan_c']) ?>"
+                                                data-d="<?= htmlspecialchars($soal['pilihan_d']) ?>"
+                                                data-jawaban="<?= $soal['jawaban'] ?>"
+                                                data-nilai="<?= $soal['bobot_nilai'] ?>">
+                                                <i class="ti ti-pencil"></i>
+                                            </a>
+
+                                            <button type="button"
+                                                class="btn btn-sm btn-danger btnDeleteSoal"
+                                                data-id="<?= $soal['id'] ?>"
+                                                data-url="<?= base_url('admin/soal/delete/' . $soal['id']) ?>">
+                                                <i class="ti ti-trash"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -119,6 +179,68 @@
     $(document).ready(function() {
         $('#tableSoal').DataTable({
             responsive: true,
+        });
+
+        // Trigger modal
+        $('#btnTambahSoal').on('click', function() {
+            $('#modalTambahSoal').modal('show');
+        });
+    });
+
+    $(document).on('click', '.btnEditSoal', function() {
+        let id = $(this).data('id');
+        $('#edit_id').val(id);
+        $('#edit_kategori_id').val($(this).data('kategori'));
+        $('#edit_level').val($(this).data('level'));
+        $('#edit_soal').val($(this).data('soal'));
+        $('#edit_a').val($(this).data('a'));
+        $('#edit_b').val($(this).data('b'));
+        $('#edit_c').val($(this).data('c'));
+        $('#edit_d').val($(this).data('d'));
+        $('#edit_jawaban').val($(this).data('jawaban'));
+        $('#edit_nilai').val($(this).data('nilai'));
+
+        let foto = $(this).data('foto');
+        if (foto) {
+            $('#previewFoto').html('<img src="<?= base_url("uploads/soal") ?>/' + foto + '" class="img-fluid" width="150">');
+        } else {
+            $('#previewFoto').html('<small class="text-muted">Tidak ada gambar</small>');
+        }
+
+        // set action form update
+        $('#formEditSoal').attr('action', "<?= base_url('admin/soal/update') ?>/" + id);
+
+        $('#modalEditSoal').modal('show');
+    });
+
+    $(document).on('click', '.btnDeleteSoal', function(e) {
+        e.preventDefault();
+        let url = $(this).data('url');
+
+        Swal.fire({
+            title: 'Yakin hapus soal ini?',
+            text: "Data tidak bisa dikembalikan setelah dihapus.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // buat form dinamis
+                let form = $('<form>', {
+                    'method': 'POST',
+                    'action': url
+                });
+                form.append($('<input>', {
+                    'type': 'hidden',
+                    'name': '_method',
+                    'value': 'DELETE'
+                }));
+                $('body').append(form);
+                form.submit();
+            }
         });
     });
 </script>
