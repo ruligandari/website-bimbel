@@ -13,4 +13,9 @@ use OpenApi\Attributes as OA;
     url: "http://localhost:8080/",
     description: "Local Server"
 )]
+// tambahkan server production
+#[OA\Server(
+    url: "https://bimba.cognidev.my.id/",
+    description: "Production Server"
+)]
 class OpenApiSpec {}

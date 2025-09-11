@@ -9,6 +9,10 @@
         {
             "url": "http://localhost:8080/",
             "description": "Local Server"
+        },
+        {
+            "url": "https://bimba.cognidev.my.id/",
+            "description": "Production Server"
         }
     ],
     "paths": {
