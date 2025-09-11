@@ -95,14 +95,76 @@ class ApiController extends BaseController
             $statusCode = 200;
         }
 
-        return $this->response->setStatusCode($statusCode)
-            ->setJSON(apiResponse($soal));
+        return $this->response->setJSON(['status' => 'success', 'data' => $soal])->setStatusCode($statusCode);
     }
-
-    public function postNilai()
+    #[OA\Post(
+        path: '/api/login',
+        summary: 'Login Siswa',
+        tags: ['Login Siswa'],
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'username', type: 'string'),
+                    new OA\Property(property: 'password', type: 'string'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Login berhasil',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'string', example: 'success'),
+                        new OA\Property(property: 'data', type: 'object', additionalProperties: false)
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad Request',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'string', example: 'error'),
+                        new OA\Property(property: 'message', type: 'string', example: 'Username and password are required')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthorized',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'string', example: 'error'),
+                        new OA\Property(property: 'message', type: 'string', example: 'Invalid username or password')
+                    ]
+                )
+            )
+        ]
+    )]
+    public function loginSiswa()
     {
-        $data = $this->request->getPost();
-        // Proses data nilai
-        return $this->response->setJSON(['status' => 'success']);
+        $data = $this->request->getJSON(true);
+        // tangkap username dan password
+        $username = $data['username'];
+        $password = $data['password'];
+
+        // logic login siswa
+
+        if (!$username || !$password) {
+            return $this->response->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST)
+                ->setJSON(['status' => 'error', 'message' => 'Username and password are required']);
+        } else {
+            // validasi user
+            $siswaModel = model('App\Models\SiswaModel');
+            $siswa = $siswaModel->where('username', $username)->first();
+            if (!$siswa || !password_verify($password, $siswa['password'])) {
+                return $this->response->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED)
+                    ->setJSON(['status' => 'error', 'message' => 'Invalid username or password']);
+            }
+            // kembalikan data siswa tanpa password
+            unset($siswa['password']);
+            return $this->response->setJSON(['status' => 'success', 'data' => $siswa]);
+        }
     }
 }

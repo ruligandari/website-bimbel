@@ -24,8 +24,13 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
 
 // API Routes
 $routes->group('api', function ($routes) {
+    // login
+    $routes->post('login', 'Api\ApiController::loginSiswa');
+    // get soal
     $routes->get('soal', 'Api\ApiController::getSoal');
     // push nilai
-    $routes->post('nilai', 'Api\ApiController::postNilai');
+    $routes->post('nilai/start', 'Api\NilaiController::start');
+    $routes->post('nilai/update', 'Api\NilaiController::update');
+    $routes->get('nilai', 'Api\NilaiController::getNilai');
     // Add other API routes here
 });

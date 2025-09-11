@@ -142,12 +142,291 @@
                     }
                 }
             }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Login Siswa"
+                ],
+                "summary": "Login Siswa",
+                "operationId": "af8e209c560b9dd5cd761c2725e84b43",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login berhasil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Username and password are required"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid username or password"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/nilai/start": {
+            "post": {
+                "tags": [
+                    "Nilai"
+                ],
+                "summary": "Mulai attempt baru untuk siswa",
+                "operationId": "291be6a3efc0585eccc7566e9007da7b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "siswa_id"
+                                ],
+                                "properties": {
+                                    "siswa_id": {
+                                        "description": "ID siswa yang memulai attempt",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Berhasil memulai attempt baru",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Percobaan baru dimulai"
+                                        },
+                                        "attempt": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/nilai/update": {
+            "post": {
+                "tags": [
+                    "Nilai"
+                ],
+                "summary": "Update nilai attempt",
+                "operationId": "42a3382ab8c5852cd971ba4ac024b829",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "siswa_id",
+                                    "attempt"
+                                ],
+                                "properties": {
+                                    "siswa_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "attempt": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nilai_numerik": {
+                                        "type": "integer",
+                                        "example": 80
+                                    },
+                                    "nilai_color": {
+                                        "type": "integer",
+                                        "example": 90
+                                    },
+                                    "nilai_greeting": {
+                                        "type": "integer",
+                                        "example": 70
+                                    },
+                                    "nilai_family": {
+                                        "type": "integer",
+                                        "example": 85
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Nilai berhasil diupdate"
+                    }
+                }
+            }
+        },
+        "/api/nilai": {
+            "get": {
+                "tags": [
+                    "Nilai"
+                ],
+                "summary": "Get Nilai Siswa",
+                "operationId": "9aeb54bc693ce5065c0425c50afa99d8",
+                "parameters": [
+                    {
+                        "name": "siswa_id",
+                        "in": "query",
+                        "description": "Filter nilai berdasarkan ID siswa, jika tidak diberikan maka tampilkan semua",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mengambil data nilai",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "siswa_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "attempt": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "nilai_numerik": {
+                                                        "type": "number",
+                                                        "example": 80
+                                                    },
+                                                    "nilai_color": {
+                                                        "type": "number",
+                                                        "example": 80
+                                                    },
+                                                    "nilai_greeting": {
+                                                        "type": "number",
+                                                        "example": 80
+                                                    },
+                                                    "nilai_family": {
+                                                        "type": "number",
+                                                        "example": 80
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "tags": [
         {
             "name": "Soal",
             "description": "Soal"
+        },
+        {
+            "name": "Login Siswa",
+            "description": "Login Siswa"
+        },
+        {
+            "name": "Nilai",
+            "description": "Nilai"
         }
     ]
 }
