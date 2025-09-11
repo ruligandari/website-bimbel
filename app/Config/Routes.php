@@ -9,6 +9,9 @@ $routes->get('/', 'Admin\AuthController::index');
 $routes->post('auth', 'Admin\AuthController::login');
 $routes->get('logout', 'Admin\AuthController::logout');
 
+// api docs swagger
+$routes->get('docs', 'Docs\SwaggerController::index');
+
 $routes->group('admin', ['filter' => 'auth'], function ($routes) {
     $routes->get('dashboard', 'Admin\DashboardController::index');
     $routes->get('soal', 'Admin\SoalController::index');
@@ -17,4 +20,12 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
     $routes->delete('soal/delete/(:num)', 'Admin\SoalController::delete/$1');
     $routes->get('nilai', 'Admin\NilaiController::index');
     // Add other admin routes here
+});
+
+// API Routes
+$routes->group('api', function ($routes) {
+    $routes->get('soal', 'Api\ApiController::getSoal');
+    // push nilai
+    $routes->post('nilai', 'Api\ApiController::postNilai');
+    // Add other API routes here
 });

@@ -1,0 +1,153 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Soal",
+        "description": "Dokumentasi API Soal & Nilai",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080/",
+            "description": "Local Server"
+        }
+    ],
+    "paths": {
+        "/api/soal": {
+            "get": {
+                "tags": [
+                    "Soal"
+                ],
+                "summary": "Ambil list soal atau detail berdasarkan filter",
+                "operationId": "23a73000052fd7d86f4a4eb3d1e2a7d2",
+                "parameters": [
+                    {
+                        "name": "kategori",
+                        "in": "query",
+                        "description": "Filter soal berdasarkan nama kategori (numerik, color, greeting, family)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "nomor",
+                        "in": "query",
+                        "description": "Ambil soal berdasarkan ID (nomor soal)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil ambil daftar soal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 12
+                                            },
+                                            "soal": {
+                                                "type": "string",
+                                                "example": "Apa ibu kota Indonesia?"
+                                            },
+                                            "kategori": {
+                                                "type": "string",
+                                                "example": "IPS"
+                                            },
+                                            "pilihan_a": {
+                                                "type": "string",
+                                                "example": "Jakarta"
+                                            },
+                                            "pilihan_b": {
+                                                "type": "string",
+                                                "example": "Bandung"
+                                            },
+                                            "pilihan_c": {
+                                                "type": "string",
+                                                "example": "Surabaya"
+                                            },
+                                            "pilihan_d": {
+                                                "type": "string",
+                                                "example": "Medan"
+                                            },
+                                            "jawaban": {
+                                                "type": "string",
+                                                "example": "A"
+                                            },
+                                            "bobot_nilai": {
+                                                "type": "integer",
+                                                "example": 10
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "206": {
+                        "description": "Berhasil ambil detail soal tunggal (jika pakai ?nomor=)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 12
+                                        },
+                                        "soal": {
+                                            "type": "string",
+                                            "example": "Apa ibu kota Indonesia?"
+                                        },
+                                        "kategori": {
+                                            "type": "string",
+                                            "example": "IPS"
+                                        },
+                                        "pilihan_a": {
+                                            "type": "string",
+                                            "example": "Jakarta"
+                                        },
+                                        "pilihan_b": {
+                                            "type": "string",
+                                            "example": "Bandung"
+                                        },
+                                        "pilihan_c": {
+                                            "type": "string",
+                                            "example": "Surabaya"
+                                        },
+                                        "pilihan_d": {
+                                            "type": "string",
+                                            "example": "Medan"
+                                        },
+                                        "jawaban": {
+                                            "type": "string",
+                                            "example": "A"
+                                        },
+                                        "bobot_nilai": {
+                                            "type": "integer",
+                                            "example": 10
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Soal",
+            "description": "Soal"
+        }
+    ]
+}

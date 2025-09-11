@@ -53,4 +53,6 @@ class SoalModel extends Model
             ->orderBy('soal.id', 'ASC')
             ->findAll();
     }
+
+    public function saveSoal($data) {}
 }
