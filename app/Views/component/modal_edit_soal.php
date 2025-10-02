@@ -2,7 +2,6 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form id="formEditSoal" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="_method" value="PUT">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalEditSoalLabel">Edit Soal</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
