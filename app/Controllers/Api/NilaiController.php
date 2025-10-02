@@ -90,12 +90,15 @@ class NilaiController extends BaseController
     )]
     public function update()
     {
-        // get data json
         $data = $this->request->getJSON(true);
+
         if (!isset($data['siswa_id']) || !isset($data['attempt'])) {
-            return $this->response->setJSON(['status' => false, 'message' => 'siswa_id dan attempt harus diisi'])
-                ->setStatusCode(400);
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'siswa_id dan attempt harus diisi'
+            ])->setStatusCode(400);
         }
+
         $siswaId = $data['siswa_id'];
         $attempt = $data['attempt'];
 
@@ -108,37 +111,38 @@ class NilaiController extends BaseController
         ])->first();
 
         if (!$nilai) {
-            return $this->response->setJSON(['status' => false, 'message' => 'Attempt tidak ditemukan'])
-                ->setStatusCode(404);
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Attempt tidak ditemukan'
+            ])->setStatusCode(404);
         }
 
-        // update kolom sesuai yang dikirim
+        // update hanya field yang dikirim (bukan null)
         $updateData = [];
         foreach (['nilai_numerik', 'nilai_color', 'nilai_greeting', 'nilai_family'] as $field) {
-            if (isset($data[$field])) {
+            if (array_key_exists($field, $data) && $data[$field] !== null) {
                 $updateData[$field] = $data[$field];
             }
         }
 
-        // hitung total jika semua sudah ada
+        // hitung total hanya jika semua nilai sudah terisi
+        $merged = array_merge($nilai, $updateData);
         if (
-            isset($updateData['nilai_numerik']) || isset($updateData['nilai_color']) ||
-            isset($updateData['nilai_greeting']) || isset($updateData['nilai_family'])
+            $merged['nilai_numerik'] !== null &&
+            $merged['nilai_color']   !== null &&
+            $merged['nilai_greeting'] !== null &&
+            $merged['nilai_family']  !== null
         ) {
-            $merged = array_merge($nilai, $updateData);
-            if (
-                $merged['nilai_numerik'] !== null && $merged['nilai_color'] !== null &&
-                $merged['nilai_greeting'] !== null && $merged['nilai_family'] !== null
-            ) {
-                $updateData['total_nilai'] =
-                    $merged['nilai_numerik'] +
-                    $merged['nilai_color'] +
-                    $merged['nilai_greeting'] +
-                    $merged['nilai_family'];
-            }
+            $updateData['total_nilai'] =
+                $merged['nilai_numerik'] +
+                $merged['nilai_color'] +
+                $merged['nilai_greeting'] +
+                $merged['nilai_family'];
         }
 
-        $nilaiModel->update($nilai['id'], $updateData);
+        if (!empty($updateData)) {
+            $nilaiModel->update($nilai['id'], $updateData);
+        }
 
         return $this->response->setJSON([
             'status' => true,
