@@ -78,10 +78,42 @@ class ApiController extends BaseController
     public function getSoal()
     {
         $soalModel = model('App\Models\SoalModel');
-        $kategori = $this->request->getGet('kategori');
-        $nomor    = $this->request->getGet('nomor');
+        $kategori  = $this->request->getGet('kategori');
+        $nomor     = $this->request->getGet('nomor');
 
-        if ($kategori) {
+        if ($kategori === 'family') {
+            // Ambil 5 soal untuk setiap kategori
+            $soalNumerik = $soalModel->join('kategori', 'kategori.id = soal.kategori_id')
+                ->select('soal.*, kategori.kode as kategori_soal')
+                ->where('kategori.kode', 'numerik')
+                ->orderBy('RAND()') // acak
+                ->limit(5)
+                ->findAll();
+
+            $soalGreeting = $soalModel->join('kategori', 'kategori.id = soal.kategori_id')
+                ->select('soal.*, kategori.kode as kategori_soal')
+                ->where('kategori.kode', 'greeting')
+                ->orderBy('RAND()')
+                ->limit(5)
+                ->findAll();
+
+            $soalColor = $soalModel->join('kategori', 'kategori.id = soal.kategori_id')
+                ->select('soal.*, kategori.kode as kategori_soal')
+                ->where('kategori.kode', 'color')
+                ->orderBy('RAND()')
+                ->limit(5)
+                ->findAll();
+
+            $soalFamily = $soalModel->join('kategori', 'kategori.id = soal.kategori_id')
+                ->select('soal.*, kategori.kode as kategori_soal')
+                ->where('kategori.kode', 'family')
+                ->orderBy('RAND()')
+                ->limit(5)
+                ->findAll();
+
+            $soal = array_merge($soalFamily, $soalNumerik, $soalGreeting, $soalColor);
+            $statusCode = 200;
+        } elseif ($kategori) {
             $soal = $soalModel->join('kategori', 'kategori.id = soal.kategori_id')
                 ->select('soal.*, kategori.kode as kategori_soal')
                 ->where('kategori.kode', $kategori)
@@ -89,14 +121,18 @@ class ApiController extends BaseController
             $statusCode = 200;
         } elseif ($nomor) {
             $soal = $soalModel->where('id', $nomor)->first();
-            $statusCode = 206; // Partial Content → menandakan hanya 1 item
+            $statusCode = 206; // Partial Content
         } else {
             $soal = $soalModel->findAll();
             $statusCode = 200;
         }
 
-        return $this->response->setJSON(['status' => 'success', 'data' => $soal])->setStatusCode($statusCode);
+        return $this->response->setJSON([
+            'status' => 'success',
+            'data'   => $soal
+        ])->setStatusCode($statusCode);
     }
+
     #[OA\Post(
         path: '/api/login',
         summary: 'Login Siswa',
