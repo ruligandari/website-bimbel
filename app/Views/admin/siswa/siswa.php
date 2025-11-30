@@ -59,6 +59,9 @@
                                 <th>No</th>
                                 <th>Nama</th>
                                 <th>Username</th>
+                                <?php if ($role == 1): // Only admin sees guru column ?>
+                                <th>Guru</th>
+                                <?php endif; ?>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -69,13 +72,17 @@
                                     <td><?= $no++ ?></td>
                                     <td><?= esc($siswa['nama']) ?></td>
                                     <td><?= esc($siswa['username']) ?></td>
+                                    <?php if ($role == 1): // Only admin sees guru column ?>
+                                    <td><?= $siswa['guru_nama'] ? esc($siswa['guru_nama']) : '<span class="text-muted">-</span>' ?></td>
+                                    <?php endif; ?>
                                     <td>
                                         <div class="d-flex gap-2">
                                             <a href="javascript:void(0)"
                                                 class="btn btn-sm btn-success btnEditSiswa"
                                                 data-id="<?= $siswa['id'] ?>"
                                                 data-nama="<?= esc($siswa['nama']) ?>"
-                                                data-username="<?= esc($siswa['username']) ?>">
+                                                data-username="<?= esc($siswa['username']) ?>"
+                                                data-guru_id="<?= $siswa['guru_id'] ?>">
                                                 <i class="ti ti-pencil"></i>
                                             </a>
                                             <form action="<?= base_url('admin/siswa/delete/' . $siswa['id']) ?>" method="post" class="d-inline formDelete">
@@ -118,6 +125,19 @@
                         <label for="username" class="form-label">Username</label>
                         <input type="text" class="form-control" name="username" id="username" required>
                     </div>
+
+                    <?php if ($role == 1): // Only admin can select guru ?>
+                    <div class="mb-3">
+                        <label for="guru_id" class="form-label">Guru</label>
+                        <select class="form-select" name="guru_id" id="guru_id">
+                            <option value="">-- Pilih Guru --</option>
+                            <?php foreach ($gurus as $guru): ?>
+                                <option value="<?= $guru['id'] ?>"><?= esc($guru['nama']) ?> (<?= esc($guru['cabang']) ?>)</option>
+                            <?php endforeach; ?>
+                        </select>
+                        <small class="text-muted">Kosongkan jika tidak ada guru yang dipilih</small>
+                    </div>
+                    <?php endif; ?>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
@@ -189,6 +209,7 @@
             $('#username').val('');
             $('#password').val('');
             $('#password').attr('placeholder', '');
+            $('#guru_id').val(''); // Reset guru dropdown
             $('#modalSiswa').modal('show');
         });
 
@@ -197,6 +218,7 @@
             let id = $(this).data('id');
             let nama = $(this).data('nama');
             let username = $(this).data('username');
+            let guruId = $(this).data('guru_id');
 
             $('#modalSiswa .modal-title').text('Edit Siswa');
             $('#formSiswa').attr('action', "<?= base_url('admin/siswa/update') ?>/" + id);
@@ -204,6 +226,7 @@
             $('#nama').val(nama);
             $('#username').val(username);
             $('#password').val('');
+            $('#guru_id').val(guruId); // Set guru dropdown
             // hint password kosong kalau gak diubah
             $('#password').attr('placeholder', 'Kosongkan jika tidak diubah');
             $('#modalSiswa').modal('show');

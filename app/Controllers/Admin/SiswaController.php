@@ -18,14 +18,30 @@ class SiswaController extends BaseController
         
         // If guru (role = 2), only show students added by this guru
         if ($role == 2) {
-            $siswas = $model->where('guru_id', $userId)->orderBy('id', 'DESC')->findAll();
+            $siswas = $model->where('siswa.guru_id', $userId)
+                ->select('siswa.*, user.nama as guru_nama')
+                ->join('user', 'user.id = siswa.guru_id', 'left')
+                ->orderBy('siswa.id', 'DESC')
+                ->findAll();
         } else {
-            // Admin (role = 1) can see all students
-            $siswas = $model->orderBy('id', 'DESC')->findAll();
+            // Admin (role = 1) can see all students with guru info
+            $siswas = $model->select('siswa.*, user.nama as guru_nama')
+                ->join('user', 'user.id = siswa.guru_id', 'left')
+                ->orderBy('siswa.id', 'DESC')
+                ->findAll();
+        }
+        
+        // Get list of guru for dropdown (admin only)
+        $gurus = [];
+        if ($role == 1) {
+            $userModel = new \App\Models\UserModel();
+            $gurus = $userModel->where('role', 2)->findAll();
         }
         
         $data = [
             'siswas' => $siswas,
+            'gurus' => $gurus,
+            'role' => $role,
             'title' => 'Data Siswa',
         ];
         return view('admin/siswa/siswa', $data);
@@ -44,11 +60,18 @@ class SiswaController extends BaseController
         }
 
         $model = new SiswaModel();
+        
+        // Admin can select guru, guru auto-assigned to themselves
+        $role = session()->get('role');
+        $guruId = ($role == 1 && $this->request->getPost('guru_id')) 
+            ? $this->request->getPost('guru_id') 
+            : session()->get('user_id');
+        
         $model->insert([
             'nama'     => $this->request->getPost('nama'),
             'username' => $this->request->getPost('username'),
             'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
-            'guru_id'  => session()->get('user_id'), // Save guru_id from session
+            'guru_id'  => $guruId,
         ]);
 
         return redirect()->to(base_url('admin/siswa'))->with('success', 'Siswa berhasil ditambahkan');
@@ -87,6 +110,11 @@ class SiswaController extends BaseController
             'nama'     => $this->request->getPost('nama'),
             'username' => $this->request->getPost('username'),
         ];
+
+        // Admin can change guru_id
+        if ($role == 1 && $this->request->getPost('guru_id')) {
+            $data['guru_id'] = $this->request->getPost('guru_id');
+        }
 
         // jika password diisi, maka hash password
         if ($this->request->getPost('password')) {
