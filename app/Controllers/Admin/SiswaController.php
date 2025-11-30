@@ -11,8 +11,21 @@ class SiswaController extends BaseController
     public function index()
     {
         $model = new SiswaModel();
+        
+        // Get user role from session
+        $role = session()->get('role');
+        $userId = session()->get('user_id');
+        
+        // If guru (role = 2), only show students added by this guru
+        if ($role == 2) {
+            $siswas = $model->where('guru_id', $userId)->orderBy('id', 'DESC')->findAll();
+        } else {
+            // Admin (role = 1) can see all students
+            $siswas = $model->orderBy('id', 'DESC')->findAll();
+        }
+        
         $data = [
-            'siswas' => $model->orderBy('id', 'DESC')->findAll(),
+            'siswas' => $siswas,
             'title' => 'Data Siswa',
         ];
         return view('admin/siswa/siswa', $data);
@@ -35,6 +48,7 @@ class SiswaController extends BaseController
             'nama'     => $this->request->getPost('nama'),
             'username' => $this->request->getPost('username'),
             'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
+            'guru_id'  => session()->get('user_id'), // Save guru_id from session
         ]);
 
         return redirect()->to(base_url('admin/siswa'))->with('success', 'Siswa berhasil ditambahkan');
@@ -46,6 +60,13 @@ class SiswaController extends BaseController
         $siswa = $model->find($id);
         if (!$siswa) {
             return redirect()->to(base_url('admin/siswa'))->with('error', 'Siswa tidak ditemukan');
+        }
+
+        // Check if guru is trying to update student that's not theirs
+        $role = session()->get('role');
+        $userId = session()->get('user_id');
+        if ($role == 2 && $siswa['guru_id'] != $userId) {
+            return redirect()->to(base_url('admin/siswa'))->with('error', 'Anda tidak memiliki akses untuk mengubah siswa ini');
         }
 
         $rules = [
@@ -82,6 +103,13 @@ class SiswaController extends BaseController
         $siswa = $model->find($id);
         if (!$siswa) {
             return redirect()->to(base_url('admin/siswa'))->with('error', 'Siswa tidak ditemukan');
+        }
+
+        // Check if guru is trying to delete student that's not theirs
+        $role = session()->get('role');
+        $userId = session()->get('user_id');
+        if ($role == 2 && $siswa['guru_id'] != $userId) {
+            return redirect()->to(base_url('admin/siswa'))->with('error', 'Anda tidak memiliki akses untuk menghapus siswa ini');
         }
 
         $model->delete($id);

@@ -11,8 +11,8 @@ class SiswaModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
-    protected $protectFields    = false;
-    protected $allowedFields    = [];
+    protected $protectFields    = true;
+    protected $allowedFields    = ['nama', 'username', 'password', 'guru_id'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -21,7 +21,7 @@ class SiswaModel extends Model
     protected array $castHandlers = [];
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';

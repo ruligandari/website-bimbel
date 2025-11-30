@@ -19,12 +19,22 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
     $routes->post('soal/update/(:num)', 'Admin\SoalController::update/$1');
     $routes->delete('soal/delete/(:num)', 'Admin\SoalController::delete/$1');
     $routes->get('nilai', 'Admin\NilaiController::index');
+    
     // siswa
     $routes->get('siswa', 'Admin\SiswaController::index');
     $routes->post('siswa/store', 'Admin\SiswaController::store');
     $routes->post('siswa/update/(:num)', 'Admin\SiswaController::update/$1');
     $routes->delete('siswa/delete/(:num)', 'Admin\SiswaController::delete/$1');
-    // Add other admin routes here
+    
+    // profile (all users)
+    $routes->get('profile', 'Admin\ProfileController::index');
+    $routes->post('profile/update', 'Admin\ProfileController::update');
+    
+    // guru management (admin only)
+    $routes->get('guru', 'Admin\GuruController::index', ['filter' => 'role:admin']);
+    $routes->post('guru/store', 'Admin\GuruController::store', ['filter' => 'role:admin']);
+    $routes->post('guru/update/(:num)', 'Admin\GuruController::update/$1', ['filter' => 'role:admin']);
+    $routes->post('guru/delete/(:num)', 'Admin\GuruController::delete/$1', ['filter' => 'role:admin']);
 });
 
 // API Routes

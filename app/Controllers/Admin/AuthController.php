@@ -33,6 +33,9 @@ class AuthController extends BaseController
             // Set session data
             session()->set('user_id', $user['id']);
             session()->set('username', $user['username']);
+            session()->set('nama', $user['nama']);
+            session()->set('role', $user['role']);
+            session()->set('cabang', $user['cabang']);
 
             return redirect()->to('/admin/dashboard');
         } else {

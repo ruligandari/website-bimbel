@@ -24,6 +24,20 @@ class TblUser extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 255,
             ],
+            'nama' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+            ],
+            'role' => [
+                'type' => 'TINYINT',
+                'constraint' => 1,
+                'comment' => '1=admin, 2=guru',
+            ],
+            'cabang' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => true,
+            ],
         ]);
 
         $this->forge->addKey('id', true);

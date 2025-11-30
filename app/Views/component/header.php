@@ -17,6 +17,21 @@
                           aria-expanded="false">
                           <img src="<?= base_url() ?>/assets/images/profile/user-1.jpg" alt="" width="35" height="35" class="rounded-circle">
                       </a>
+                      <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+                          <div class="message-body">
+                              <a href="<?= base_url('admin/profile') ?>" class="d-flex align-items-center gap-2 dropdown-item">
+                                  <i class="ti ti-user fs-6"></i>
+                                  <p class="mb-0 fs-3">Profile</p>
+                              </a>
+                              <?php if(session()->get('role') == 1): ?>
+                              <a href="<?= base_url('admin/guru') ?>" class="d-flex align-items-center gap-2 dropdown-item">
+                                  <i class="ti ti-users fs-6"></i>
+                                  <p class="mb-0 fs-3">Manage Guru</p>
+                              </a>
+                              <?php endif; ?>
+                              <a href="<?= base_url('logout') ?>" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                          </div>
+                      </div>
                   </li>
               </ul>
           </div>

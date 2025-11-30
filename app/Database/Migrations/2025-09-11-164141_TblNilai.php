@@ -11,6 +11,7 @@ class TblNilai extends Migration
         $this->forge->addField([
             'id'            => ['type' => 'BIGINT', 'unsigned' => true, 'auto_increment' => true],
             'siswa_id'      => ['type' => 'BIGINT', 'unsigned' => true],
+            'guru_id'       => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'null' => true],
             'attempt'       => ['type' => 'INT', 'constraint' => 11, 'default' => 1],
             'nilai_numerik' => ['type' => 'INT', 'constraint' => 11, 'null' => true],
             'nilai_color'   => ['type' => 'INT', 'constraint' => 11, 'null' => true],
@@ -22,6 +23,7 @@ class TblNilai extends Migration
         ]);
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('siswa_id', 'siswa', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('guru_id', 'user', 'id', 'SET NULL', 'SET NULL');
         $this->forge->createTable('nilai', true);
     }
 

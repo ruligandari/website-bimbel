@@ -2,19 +2,10 @@
 
 <?php $this->section('styles'); ?>
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css" />
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.bootstrap5.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
 <?php $this->endSection(); ?>
 
 <?php $this->section('content'); ?>
-<style>
-    #tableSiswa td,
-    #tableSiswa th {
-        font-size: 13px;
-        white-space: normal;
-        word-break: break-word;
-    }
-</style>
 
 <!-- SweetAlert Flash -->
 <?php if (session()->getFlashdata('success')): ?>
@@ -48,43 +39,44 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title fw-semibold">Data Siswa</h5>
-                <a href="javascript:void(0)" class="btn btn-primary btn-sm" id="btnTambahSiswa">Tambah Siswa</a>
+                <h5 class="card-title fw-semibold">Data Guru</h5>
+                <a href="javascript:void(0)" class="btn btn-primary btn-sm" id="btnTambahGuru">Tambah Guru</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped align-middle" id="tableSiswa">
+                    <table class="table table-striped align-middle" id="tableGuru">
                         <thead class="text-dark fs-4">
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
                                 <th>Username</th>
+                                <th>Cabang</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php $no = 1;
-                            foreach ($siswas as $siswa): ?>
+                            foreach ($gurus as $guru): ?>
                                 <tr>
                                     <td><?= $no++ ?></td>
-                                    <td><?= esc($siswa['nama']) ?></td>
-                                    <td><?= esc($siswa['username']) ?></td>
+                                    <td><?= esc($guru['nama']) ?></td>
+                                    <td><?= esc($guru['username']) ?></td>
+                                    <td><?= esc($guru['cabang']) ?></td>
                                     <td>
                                         <div class="d-flex gap-2">
                                             <a href="javascript:void(0)"
-                                                class="btn btn-sm btn-success btnEditSiswa"
-                                                data-id="<?= $siswa['id'] ?>"
-                                                data-nama="<?= esc($siswa['nama']) ?>"
-                                                data-username="<?= esc($siswa['username']) ?>">
+                                                class="btn btn-sm btn-success btnEditGuru"
+                                                data-id="<?= $guru['id'] ?>"
+                                                data-nama="<?= esc($guru['nama']) ?>"
+                                                data-username="<?= esc($guru['username']) ?>"
+                                                data-cabang="<?= esc($guru['cabang']) ?>">
                                                 <i class="ti ti-pencil"></i>
                                             </a>
-                                            <form action="<?= base_url('admin/siswa/delete/' . $siswa['id']) ?>" method="post" class="d-inline formDelete">
-                                                <input type="hidden" name="_method" value="DELETE">
+                                            <form action="<?= base_url('admin/guru/delete/' . $guru['id']) ?>" method="post" class="d-inline formDelete">
                                                 <button type="submit" class="btn btn-sm btn-danger">
                                                     <i class="ti ti-trash"></i>
                                                 </button>
                                             </form>
-
                                         </div>
                                     </td>
                                 </tr>
@@ -98,19 +90,19 @@
 </div>
 
 <!-- Modal Tambah/Edit -->
-<div class="modal fade" id="modalSiswa" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalGuru" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="formSiswa" method="post" action="<?= base_url('admin/siswa/store') ?>">
+            <form id="formGuru" method="post" action="<?= base_url('admin/guru/store') ?>">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah Siswa</h5>
+                    <h5 class="modal-title">Tambah Guru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="id" id="siswa_id">
+                    <input type="hidden" name="id" id="guru_id">
 
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Nama</label>
+                        <label for="nama" class="form-label">Nama Lengkap</label>
                         <input type="text" class="form-control" name="nama" id="nama" required>
                     </div>
 
@@ -120,8 +112,14 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="cabang" class="form-label">Cabang</label>
+                        <input type="text" class="form-control" name="cabang" id="cabang" required>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" name="password" id="password">
+                        <small class="text-muted">Minimal 6 karakter</small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -139,84 +137,55 @@
 <!-- jQuery and Bootstrap already loaded in template, don't reload -->
 <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.0/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.bootstrap5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.print.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     $(document).ready(function() {
-        let table = $('#tableSiswa').DataTable({
-            responsive: true,
-            dom: 'Bfrtip',
-            buttons: [{
-                    extend: 'excelHtml5',
-                    text: 'Export Excel',
-                    className: 'btn btn-success btn-sm',
-                    exportOptions: {
-                        columns: ':visible',
-                        format: {
-                            body: (data) => $(data).text().trim()
-                        }
-                    }
-                },
-                {
-                    extend: 'pdfHtml5',
-                    text: 'Export PDF',
-                    className: 'btn btn-danger btn-sm',
-                    orientation: 'landscape',
-                    pageSize: 'A4',
-                    exportOptions: {
-                        columns: ':visible',
-                        format: {
-                            body: (data) => $(data).text().trim()
-                        }
-                    }
-                }
-            ]
+        $('#tableGuru').DataTable({
+            responsive: true
         });
 
-        // Tambah Siswa
-        $('#btnTambahSiswa').on('click', function() {
-            $('#modalSiswa .modal-title').text('Tambah Siswa');
-            $('#formSiswa').attr('action', "<?= base_url('admin/siswa/store') ?>");
-            $('#siswa_id').val('');
+        // Tambah Guru
+        $('#btnTambahGuru').on('click', function() {
+            $('#modalGuru .modal-title').text('Tambah Guru');
+            $('#formGuru').attr('action', "<?= base_url('admin/guru/store') ?>");
+            $('#guru_id').val('');
             $('#nama').val('');
             $('#username').val('');
+            $('#cabang').val('');
             $('#password').val('');
             $('#password').attr('placeholder', '');
-            $('#modalSiswa').modal('show');
+            $('#password').attr('required', true);
+            $('#modalGuru').modal('show');
         });
 
-        // Edit Siswa
-        $(document).on('click', '.btnEditSiswa', function() {
+        // Edit Guru
+        $(document).on('click', '.btnEditGuru', function() {
             let id = $(this).data('id');
             let nama = $(this).data('nama');
             let username = $(this).data('username');
+            let cabang = $(this).data('cabang');
 
-            $('#modalSiswa .modal-title').text('Edit Siswa');
-            $('#formSiswa').attr('action', "<?= base_url('admin/siswa/update') ?>/" + id);
-            $('#siswa_id').val(id);
+            $('#modalGuru .modal-title').text('Edit Guru');
+            $('#formGuru').attr('action', "<?= base_url('admin/guru/update') ?>/" + id);
+            $('#guru_id').val(id);
             $('#nama').val(nama);
             $('#username').val(username);
+            $('#cabang').val(cabang);
             $('#password').val('');
-            // hint password kosong kalau gak diubah
             $('#password').attr('placeholder', 'Kosongkan jika tidak diubah');
-            $('#modalSiswa').modal('show');
+            $('#password').removeAttr('required');
+            $('#modalGuru').modal('show');
         });
 
+        // Delete confirmation
         $(document).on('submit', '.formDelete', function(e) {
-            e.preventDefault(); // cegah submit langsung
-
+            e.preventDefault();
             let form = this;
 
             Swal.fire({
                 title: 'Yakin?',
-                text: "Data siswa akan dihapus permanen!",
+                text: "Data guru akan dihapus permanen!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -225,11 +194,10 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit(); // submit manual kalau user klik "Ya"
+                    form.submit();
                 }
             });
         });
-
     });
 </script>
 <?php $this->endSection(); ?>

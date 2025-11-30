@@ -123,8 +123,7 @@
 <?php $this->endSection(); ?>
 
 <?php $this->section('script'); ?>
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery and Bootstrap already loaded in template, don't reload -->
 <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.0/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.bootstrap5.min.js"></script>

@@ -11,8 +11,8 @@ class UserModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
-    protected $protectFields    = false;
-    protected $allowedFields    = [];
+    protected $protectFields    = true;
+    protected $allowedFields    = ['username', 'password', 'nama', 'role', 'cabang'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -43,4 +43,20 @@ class UserModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    /**
+     * Get all guru (role = 2)
+     */
+    public function getGuru()
+    {
+        return $this->where('role', 2)->findAll();
+    }
+
+    /**
+     * Get all admin (role = 1)
+     */
+    public function getAdmin()
+    {
+        return $this->where('role', 1)->findAll();
+    }
 }
