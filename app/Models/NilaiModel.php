@@ -12,7 +12,7 @@ class NilaiModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['siswa_id', 'guru_id', 'attempt', 'nilai_numerik', 'nilai_color', 'nilai_greeting', 'nilai_family', 'total_nilai'];
+    protected $allowedFields    = ['siswa_id', 'attempt', 'nilai_numerik', 'nilai_color', 'nilai_greeting', 'nilai_family', 'total_nilai'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
