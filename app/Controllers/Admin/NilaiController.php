@@ -32,4 +32,40 @@ class NilaiController extends BaseController
 
         return view('admin/nilai/nilai', $data);
     }
+
+    public function delete($id)
+    {
+        // Only admin can delete nilai
+        $role = session()->get('role');
+        if ($role != 1) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Anda tidak memiliki akses untuk menghapus data nilai'
+            ])->setStatusCode(403);
+        }
+
+        $nilaiModel = new \App\Models\NilaiModel();
+        
+        // Check if nilai exists
+        $nilai = $nilaiModel->find($id);
+        if (!$nilai) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Data nilai tidak ditemukan'
+            ])->setStatusCode(404);
+        }
+
+        // Delete the nilai
+        if ($nilaiModel->delete($id)) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Data nilai berhasil dihapus'
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Gagal menghapus data nilai'
+            ])->setStatusCode(500);
+        }
+    }
 }

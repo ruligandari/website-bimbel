@@ -82,6 +82,11 @@
                                 <th class="border-bottom-0">
                                     Total Nilai
                                 </th>
+                                <?php if (session()->get('role') == 1): ?>
+                                <th class="border-bottom-0">
+                                    Aksi
+                                </th>
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -111,6 +116,13 @@
                                     <td class="border-bottom-0">
                                         <p class="mb-0 fw-normal"><?= $nilai['total_nilai'] ?></p>
                                     </td>
+                                    <?php if (session()->get('role') == 1): ?>
+                                    <td class="border-bottom-0">
+                                        <button class="btn btn-danger btn-sm delete-nilai" data-id="<?= $nilai['id'] ?>" data-nama="<?= $nilai['nama'] ?>">
+                                            <i class="ti ti-trash"></i> Hapus
+                                        </button>
+                                    </td>
+                                    <?php endif; ?>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -170,6 +182,72 @@
                 }
             }
         ]
+    });
+
+    // Delete nilai functionality
+    $(document).on('click', '.delete-nilai', function() {
+        const nilaiId = $(this).data('id');
+        const namaSiswa = $(this).data('nama');
+
+        Swal.fire({
+            title: 'Hapus Data Nilai?',
+            html: `Apakah Anda yakin ingin menghapus data nilai untuk siswa <strong>${namaSiswa}</strong>?<br><small class="text-danger">Data yang dihapus tidak dapat dikembalikan!</small>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show loading
+                Swal.fire({
+                    title: 'Menghapus...',
+                    text: 'Mohon tunggu',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Send delete request
+                $.ajax({
+                    url: `<?= base_url('admin/nilai/delete/') ?>${nilaiId}`,
+                    type: 'DELETE',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: response.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        let errorMessage = 'Terjadi kesalahan saat menghapus data';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: errorMessage
+                        });
+                    }
+                });
+            }
+        });
     });
 </script>
 <?php $this->endSection(); ?>

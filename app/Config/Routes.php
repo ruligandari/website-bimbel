@@ -19,6 +19,7 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
     $routes->post('soal/update/(:num)', 'Admin\SoalController::update/$1');
     $routes->delete('soal/delete/(:num)', 'Admin\SoalController::delete/$1');
     $routes->get('nilai', 'Admin\NilaiController::index');
+    $routes->delete('nilai/delete/(:num)', 'Admin\NilaiController::delete/$1');
     
     // siswa
     $routes->get('siswa', 'Admin\SiswaController::index');
