@@ -119,7 +119,7 @@
                                     <?php if (session()->get('role') == 1): ?>
                                     <td class="border-bottom-0">
                                         <button class="btn btn-danger btn-sm delete-nilai" data-id="<?= $nilai['id'] ?>" data-nama="<?= $nilai['nama'] ?>">
-                                            <i class="ti ti-trash"></i> Hapus
+                                            <i class="ti ti-trash"></i>
                                         </button>
                                     </td>
                                     <?php endif; ?>
